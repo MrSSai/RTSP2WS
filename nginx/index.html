@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTSP Stream</title>
+    <style>
+        #image-container {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="image-container"></div>
+    <script>
+        const imageContainer = document.getElementById('image-container');
+        const socket = new WebSocket('ws://localhost/websocket');
+        // 当收到消息时的处理逻辑
+        socket.onmessage = function(event) {
+            const imgData = event.data;
+
+            // 创建图像元素
+            const img = document.createElement('img');
+            img.src = 'data:image/jpeg;base64,' + imgData;
+            img.style.width = '100%';
+            img.style.height = 'auto';
+
+            // 清空图像容器，并添加新的图像
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(img);
+        };
+
+        // 当连接成功时的处理逻辑
+        socket.onopen = function() {
+            console.log('连接成功');
+        };
+        // 当连接关闭时的处理逻辑
+        socket.onclose = function() {
+            console.log('连接已关闭');
+        };
+		
+    </script>
+</body>
+</html>
