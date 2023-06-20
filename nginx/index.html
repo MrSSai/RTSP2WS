@@ -13,7 +13,7 @@
     <div id="image-container"></div>
     <script>
         const imageContainer = document.getElementById('image-container');
-        const socket = new WebSocket('ws://localhost/websocket');
+        const socket = new WebSocket(`ws://${location.host}/websocket`);
         // 当收到消息时的处理逻辑
         socket.onmessage = function(event) {
             const imgData = event.data;
