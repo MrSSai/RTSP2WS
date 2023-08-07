@@ -3,6 +3,7 @@ import configparser
 import gc
 import os
 import threading
+import time
 
 import cv2
 from websocket_server import WebsocketServer
@@ -14,6 +15,7 @@ config.read('config.ini')
 # 获取 rtsp_url
 rtsp_url = config.get('client', 'rtsp_url')
 
+
 top = 30
 stack = []
 RUN = False
@@ -21,6 +23,7 @@ RUN = False
 client_domain = dict()
 
 lock = threading.Lock()
+
 
 
 # 向共享缓冲栈中写入数据:
@@ -55,16 +58,36 @@ def start_read():
     if not isOpen(rtsp_url):
         print('rtsp流不可读')
         return
-    thread_pro = threading.Thread(target=write,
-                                  args=(stack, rtsp_url, top,))
-    thread_pro.start()
-
+    # thread_pro = threading.Thread(target=write,
+    #                               args=(stack, rtsp_url, top,))
+    if not thread_pro.is_alive():
+       thread_pro.start()
     start_send()
 
 def start_send():
     print('启动发送消息')
-    thread_send = threading.Thread(target=get_frame)
-    thread_send.start()
+    # thread_send = threading.Thread(target=get_frame)
+    if not thread_send.is_alive():
+        thread_send.start()
+    #thread_send.start()
+
+
+
+def check_rtsp_availability():
+    cap = cv2.VideoCapture(rtsp_url)
+    if not cap.isOpened():
+        print("RTSP stream is not currently readable.")
+
+    else:
+        start_read()
+
+    cap.release()
+
+def periodic_check():
+    while True:
+        check_rtsp_availability()
+        time.sleep(3)
+
 
 
 def send_frame(frame, server, client):
@@ -118,7 +141,19 @@ def message_received(client, server, message):
 
 
 if __name__ == '__main__':
-    start_read()
+    thread_pro = threading.Thread(target=write,
+                                  args=(stack, rtsp_url, top,))
+    thread_send = threading.Thread(target=get_frame)
+
+    check_thread = threading.Thread(target=periodic_check)
+    check_thread.daemon = True  # 设置为守护线程，程序退出时自动结束线程
+    check_thread.start()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Program terminated.")
+    #start_read()
     PORT = 9001
     server = WebsocketServer(host='0.0.0.0', port=PORT)
     server.set_fn_new_client(new_client)
