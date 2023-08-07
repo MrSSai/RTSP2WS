@@ -9,7 +9,7 @@
 ### Docker
 启动`WebSocket`服务端
 ```
-docker run --name=websocket -it --rm -p 9001:9001 -p 80:80 624647769/websocket:v1.0
+docker run --name=websocket -it --rm -p 9001:9001 -p 80:80 624647769/websocket:latest
 ```
 在浏览器输入服务端`IP`即可访问
 
@@ -24,7 +24,7 @@ docker run --name=websocket -it --rm \
  -p 9001:9001 \
  -p 80:80 \
  -v $PWD/config.ini:/app/config.ini \
- 624647769/websocket:v1.0
+ 624647769/websocket:latest
 ```
 在浏览器输入服务端`IP`即可访问
 ## 示例
