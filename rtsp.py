@@ -5,7 +5,7 @@ import time
 
 import cv2
 
-TIME_LIMITED: int = 10
+TIME_LIMITED: int = 5
 
 
 class MyThread(threading.Thread):
@@ -67,26 +67,18 @@ def video_capture_open(rtsp):
 def frame_get(rtsp):
     try:
         cap_status, cap = video_capture_open(rtsp)
-        if not cap_status:
-            print(cap_status, cap)
-            return cap
-        else:
-            return 'opened'
+        return cap_status
     except Exception as err:
         print(err)
         pass
 
 
 def isOpen(rtsp) -> bool:
-    result = frame_get(rtsp)
-    if not result:
-        return False
-    else:
-        return True
+    return frame_get(rtsp)
 
 
 if __name__ == "__main__":
-    open = isOpen('rtsp://admin:calming123@192.168.3.112:554/Streaming/Channels/1')
+    open = isOpen('rtsp://admin:calming123@192.168.3.110:554/h264Preview_01_sub')
     if not open:
         print('rtsp不可读')
     else:
