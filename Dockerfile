@@ -8,10 +8,9 @@ WORKDIR /app
 COPY . .
 
 ENV TZ=UTC
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-# 安装依赖包
-RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+    # 安装依赖包
+    && sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
     && sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
     && sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
     && apt-get update \
@@ -21,8 +20,8 @@ RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
     update-alternatives --set python /usr/bin/python3.8
 
 # 安装 Python 依赖包
-RUN pip3 install -r requirements.txt -i https://pypi.douban.com/simple/
-RUN cp nginx/nginx.conf /etc/nginx/nginx.conf
+RUN pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    && cp nginx/nginx.conf /etc/nginx/nginx.conf
 
 # 暴露 9001 端口
 EXPOSE 9001
